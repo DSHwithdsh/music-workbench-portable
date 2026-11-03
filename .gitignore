@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+settings.json
+logs/
+Music/
+diagnostics/
+service-runtime/
+.auth/
+*.zip
+*.exe

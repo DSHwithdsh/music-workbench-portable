@@ -1,0 +1,22 @@
+{
+  "name": "MusicWorkbench Portable",
+  "platform": "Windows x64",
+  "date": "2026-11-03",
+  "bundled": [
+    "CPython 3.14.7",
+    "AMDL downloader",
+    "freac 1.1.7",
+    "FFmpeg",
+    "MP4Box",
+    "Ubuntu Base 22.04.5 + fresh wrapper"
+  ],
+  "verification": {
+    "frozen_codec_test": "passed",
+    "frozen_gui_initialization": "passed",
+    "relocated_path_with_spaces_and_Chinese": "passed",
+    "PATH_without_Python_or_installed_tools": "passed",
+    "service_setup_plan": "passed; no WSL changes",
+    "original_app_files_unchanged": 5,
+    "fresh_PC_WSL_install": "not executed on deployed host"
+  }
+}
