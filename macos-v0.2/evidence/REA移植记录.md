@@ -14,7 +14,7 @@
 
 完整初始 REA 记录保存在 `windows-v02-rea.json` 及后续合并证据文件；只分析此次指定产物，不读取原账号脚本或登录状态。
 
-Mac 源码与冻结程序构建检查会另存 `build/reports`。GitHub macOS 26 ARM64 runner 的运行证据与用户 macOS 27 的最终验收应分别记录；没有实际运行证据的项保持未验证。
+Mac 源码与冻结程序构建检查会另存 `build/reports`。GitHub macOS 26 或 macOS 15 ARM64 runner 的运行证据与用户 macOS 27 的最终验收应分别记录；没有实际运行证据的项保持未验证。
 
 PyInstaller 官方说明其不是跨平台编译器，Mac Python/Tk 应用需要在 Mac 上构建：https://pyinstaller.org/en/stable/index.html 。
 依赖依据：https://www.freac.org/downloads-mainmenu-33/362-freac-117 、https://github.com/enzo1982/freac/blob/v1.1.7/packaging/macosx/prepare.sh 、https://github.com/enzo1982/freac/blob/v1.1.7/src/startconsole.cpp 、https://github.com/WorldObservationLog/wrapper/tree/wrapper.arm64.latest 。

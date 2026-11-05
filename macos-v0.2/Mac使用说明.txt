@@ -26,4 +26,4 @@ Mac 的 AAC 副本使用 fre:ac 的 CoreAudio AAC，按每声道128kbps生成立
 验收边界
 当前 Windows 主机已完成原生 ARM64 下载器交叉编译，REA 确认其为 Mach-O arm64；宿主测试验证公共音频流程及平台适配约束。这不能代替 macOS 的 CoreAudio、dylib加载、窗口、Docker登录与完整下载实测。构建器的本地临时签名不等于 Apple Developer ID 签名或公证，分发前仍需目标 Mac 验收。
 
-参考：evidence/REA移植记录.md、BUILD-STATUS.json。GitHub Actions 配方使用原生 macOS 26 ARM64 runner，可补充 Mac 运行证据，但不能代替用户 macOS 27 的最终验收。
+参考：evidence/REA移植记录.md、BUILD-STATUS.json。GitHub Actions 配方可选择原生 macOS 26 或 macOS 15 ARM64 runner，可补充 Mac 运行证据，但不能代替用户 macOS 27 的最终验收。
