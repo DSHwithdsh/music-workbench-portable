@@ -25,7 +25,10 @@ def doctor(report):
     for name, command in commands.items():
         result = subprocess.run(command, capture_output=True, timeout=60, env=process_env(settings.ffmpeg))
         output = (result.stdout + result.stderr).decode("utf-8", "replace")
-        probes[name] = {"exit_code": result.returncode, "output": output[-12000:]}
+        probes[name] = {"executable": str(Path(command[0]).resolve()), "exit_code": result.returncode, "output": output[-12000:]}
+        if getattr(sys, "frozen", False) and name != "downloader_flags":
+            app_root = Path(sys.executable).resolve().parents[2]
+            assert Path(command[0]).resolve().is_relative_to(app_root), "Tool escaped app bundle: " + name
         if name == "downloader_flags":
             assert all(flag in output for flag in ("codec-preference", "alac-save-folder", "storefront", "song"))
         else:

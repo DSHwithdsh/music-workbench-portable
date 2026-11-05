@@ -121,6 +121,14 @@ class MacPortTests(unittest.TestCase):
             service.stop()
             call.assert_called_once_with("stop", "--time", "10", state["name"])
 
+    def test_frozen_tools_cannot_fall_back_to_build_host_installations(self):
+        with tempfile.TemporaryDirectory(dir=runtime.ROOT) as temp:
+            root = Path(temp)
+            executable = root / "MusicWorkbench.app/Contents/MacOS/MusicWorkbench"
+            with patch.object(runtime, "FROZEN", True), patch.object(runtime, "RESOURCES", root / "resources"), patch.object(runtime.sys, "executable", str(executable)), patch.dict(os.environ, {"MUSIC_WORKBENCH_FFMPEG": "external-ffmpeg", "MUSIC_WORKBENCH_FREAC": "external-freac"}):
+                self.assertEqual(runtime.tool("ffmpeg"), root / "resources/tools/bin/ffmpeg")
+                self.assertEqual(runtime.freac(), executable.resolve().parent.parent / "Helpers/freac.app/Contents/MacOS/freaccmd")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

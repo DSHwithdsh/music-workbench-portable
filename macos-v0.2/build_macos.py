@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import urllib.request
+import uuid
 
 BASE = Path(__file__).resolve().parent
 RES = BASE / "resources"
@@ -110,9 +111,10 @@ def main():
     executable = app / "Contents/MacOS" / APP_NAME
     for mode in ("doctor", "self-test", "gui-smoke"):
         run([executable, "--" + mode, reports / ("frozen-" + mode + ".json")], env=bundled_env)
-    stage = BASE / "build/dmg-stage"
-    stage.mkdir(exist_ok=True)
+    stage = BASE / "build" / ("dmg-stage-" + uuid.uuid4().hex[:10])
+    stage.mkdir()
     run(["ditto", app, stage / app.name])
+    run(["codesign", "--verify", "--deep", "--strict", "--verbose=2", stage / app.name])
     if not (stage / "Applications").exists():
         (stage / "Applications").symlink_to("/Applications", target_is_directory=True)
     shutil.copy2(BASE / "Mac使用说明.txt", stage / "Mac使用说明.txt")

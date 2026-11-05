@@ -14,6 +14,9 @@ ROOT.mkdir(parents=True, exist_ok=True)
 
 
 def tool(name):
+    if FROZEN:
+        # A frozen app must not silently depend on the builder's Homebrew install.
+        return RESOURCES / "tools/bin" / name
     override = os.environ.get("MUSIC_WORKBENCH_" + name.upper())
     candidates = [Path(override)] if override else []
     candidates += [RESOURCES / "tools/bin" / name, Path("/opt/homebrew/bin") / name,
@@ -23,12 +26,12 @@ def tool(name):
 
 
 def freac():
+    if FROZEN:
+        return Path(sys.executable).resolve().parent.parent / "Helpers/freac.app/Contents/MacOS/freaccmd"
     override = os.environ.get("MUSIC_WORKBENCH_FREAC")
     if override:
         return Path(override)
     apps = [RESOURCES / "tools/freac.app", Path("/Applications/freac.app"), Path.home() / "Applications/freac.app"]
-    if FROZEN:
-        apps.insert(0, Path(sys.executable).resolve().parent.parent / "Helpers/freac.app")
     paths = [p / "Contents/MacOS/freaccmd" for p in apps]
     return next((p for p in paths if p.is_file()), paths[0])
 
@@ -37,6 +40,8 @@ def initialize_engine():
     target = ROOT / "tools/amdl"
     target.mkdir(parents=True, exist_ok=True)
     binary = RESOURCES / "tools/amdl/downloader"
+    if FROZEN and not binary.is_file():
+        raise RuntimeError("Mac 应用缺少内置 ARM64 下载器，请重新完整安装")
     if binary.is_file():
         import hashlib
         def sha(path):
