@@ -1,0 +1,24 @@
+fre:ac 1.1.7 native macOS universal distribution:
+https://github.com/enzo1982/freac/releases/download/v1.1.7/freac-1.1.7-macos11.dmg
+Source: https://github.com/enzo1982/freac/releases/download/v1.1.7/freac-1.1.7.tar.gz
+Keep the original app's COPYING, codec and framework license notices.
+
+AMDL: apmyx-gui source commit 5e17b686ca4a01b0c0397f28061788b7c36d07d5
+https://github.com/rwnk-12/apmyx-gui/tree/5e17b686ca4a01b0c0397f28061788b7c36d07d5/backend/providers/legacy
+Source archive and checksums are pinned in prepare_assets.py. The local go-mp4tag
+replacement in that source snapshot is retained. GPL-3.0 license is included.
+This is a new source build, not a claim of exact equivalence to the old dirty
+Windows engine binary.
+
+Wrapper: https://github.com/WorldObservationLog/wrapper/tree/wrapper.arm64.latest
+Fresh upstream ARM64 release, verified SHA256 in prepare_assets.py.
+The original license is included. No user login cache is distributed.
+
+Mutagen 1.48.1: https://github.com/quodlibet/mutagen ; GPL-2.0-or-later.
+FFmpeg: https://ffmpeg.org/ ; build obtained through Homebrew ffmpeg@6.
+GPAC: https://github.com/gpac/gpac ; build obtained through Homebrew gpac.
+CPython: https://docs.python.org/3/license.html
+Tcl/Tk: https://www.tcl-lang.org/software/tcltk/license.html
+PyInstaller: https://pyinstaller.org/en/stable/license.html
+
+Build dependencies and libraries retain their upstream license obligations.

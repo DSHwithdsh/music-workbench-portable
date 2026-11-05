@@ -1,0 +1,28 @@
+# Fresh portable defaults. No account credentials or tokens are bundled.
+authorization-token: your-authorization-token
+media-user-token: your-media-user-token
+language: ''
+storefront: us
+alac-save-folder: downloads
+atmos-save-folder: downloads-atmos
+aac-save-folder: downloads-aac
+get-m3u8-from-device: true
+get-m3u8-mode: hires
+get-m3u8-port: 127.0.0.1:20020
+decrypt-m3u8-port: 127.0.0.1:10020
+alac-max: 192000
+atmos-max: 2768
+cover-size: 3000x3000
+cover-format: jpg
+embed-cover: true
+embed-lrc: true
+save-lrc-file: true
+lrc-format: lrc
+lrc-type: lyrics
+song-file-format: '{SongNumber}. {SongName}'
+album-folder-format: '{AlbumName}'
+artist-folder-format: '{UrlArtistName}'
+playlist-folder-format: '{PlaylistName}'
+limit-max: 200
+max-memory-limit: 256
+aac-type: aac-lc

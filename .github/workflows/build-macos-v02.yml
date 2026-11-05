@@ -1,0 +1,35 @@
+name: Build macOS v0.2 port
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  apple-silicon:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Native build dependencies
+        run: brew install python@3.14 python-tk@3.14 ffmpeg@6 gpac go
+      - name: Build and test on Apple Silicon
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = arm64
+          cd macos-v0.2
+          "$(brew --prefix python@3.14)/bin/python3.14" -m venv .venv
+          .venv/bin/python -m pip install -r requirements-macos.txt
+          .venv/bin/python prepare_assets.py
+          .venv/bin/python build_macos.py
+      - name: Upload DMG and acceptance reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MusicWorkbench-v0.2-Mac-ARM64-preview
+          path: |
+            macos-v0.2/dist/*.dmg
+            macos-v0.2/dist/*.sha256
+            macos-v0.2/build/reports/*.json
+            macos-v0.2/BUILD-PROVENANCE.json
+          if-no-files-found: warn
+          retention-days: 30

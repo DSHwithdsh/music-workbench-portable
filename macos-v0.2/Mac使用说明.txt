@@ -1,0 +1,29 @@
+Music 工作台 v0.2 Mac 移植预览
+目标：Apple Silicon，用户指定的 macOS 27。
+
+当前目录是移植源码与构建素材，不是已经通过 Mac 验收的安装包。
+Windows 主程序、旧版便携包与已部署服务均保留。
+
+在 Mac 上构建
+1. 安装 Homebrew（https://brew.sh/）。如需下载音乐，还需安装并启动 Apple Silicon 版 Docker Desktop；本地转码和标签功能不需要 Docker。
+2. 完整复制并解压本构建包。在终端运行：zsh 在Mac上构建.command
+3. 入口会安装 Homebrew 构建依赖、建立本目录内的 Python 虚拟环境，再生成原生 ARM64 .app 和 DMG。构建过程需要联网和足够磁盘空间。
+4. 构建器必须先通过源码检查、实际音频测试、冻结 EXE 的工具检查、测试及窗口初始化，再生成 DMG。失败时请查看 build/reports 与终端输出，不要把未通过检查的 dist 目录当作正式发行版。
+5. 成功后打开 dist 中的 DMG，把 MusicWorkbench.app 拖到 Applications。成品包含 Python、下载器、完整 freac.app、FFmpeg/MP4Box 及其收集的依赖。工具依赖扫描会拒绝残留的 Homebrew 绝对加载路径。
+
+运行
+界面保留“搜索发现”“下载与任务”“标签与歌词”“本地转码”等页面。标签来自 Apple 公开目录，歌词来自 LRCLIB；仅发送歌曲检索文字，不上传音频。支持标签候选预览、同步 LRC、封面补全、写入前备份及音频一致性检查。
+
+Mac 的 AAC 副本使用 fre:ac 的 CoreAudio AAC，按每声道128kbps生成立体声256kbps副本，并检查 AAC-LC。FLAC仍使用等级6并检查 PCM 一致。CoreAudio 与 Windows FDK 的输出字节不保证相同。
+
+配置、日志与标签备份位于 ~/Library/Application Support/MusicWorkbenchMac-v0.2；默认音乐位于 ~/Music/MusicWorkbench。不会向 Applications 内的签名应用写用户配置。外部 MusicTag.exe 不能在 macOS 原生运行；内置标签功能可独立使用，外部入口只接受自己另行安装的 .app 标签应用。
+
+首次下载
+“打开解密服务”会在终端打开独立 ARM64 Docker 服务，首次构建需要联网获取 Debian 基础镜像。服务仅发布本机127.0.0.1的10020与20020端口。请在交互窗口输入自己的 Apple Music 账号；密码不写入启动脚本或 Docker 的环境变量配置。
+账号缓存位于用户目录内的独立 service-runtime/account。不要分享这个目录。工作台只按自身状态记录和标签操作独立容器，不停止或删除其他容器。
+下载结束可在服务终端按 Ctrl+C，或运行应用的 --service --stop 模式结束本工作台的服务。不要仅靠关闭界面判断服务已结束。
+
+验收边界
+当前 Windows 主机已完成原生 ARM64 下载器交叉编译，REA 确认其为 Mach-O arm64；宿主测试验证公共音频流程及平台适配约束。这不能代替 macOS 的 CoreAudio、dylib加载、窗口、Docker登录与完整下载实测。构建器的本地临时签名不等于 Apple Developer ID 签名或公证，分发前仍需目标 Mac 验收。
+
+参考：evidence/REA移植记录.md、BUILD-STATUS.json。GitHub Actions 配方使用原生 macOS 26 ARM64 runner，可补充 Mac 运行证据，但不能代替用户 macOS 27 的最终验收。
