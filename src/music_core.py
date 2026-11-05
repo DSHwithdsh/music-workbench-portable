@@ -32,6 +32,7 @@ class Settings:
     output: str = str(ROOT / "Music")
     workers: int = 4
     storefront: str = "us"
+    musictag: str = ""
 
     @property
     def downloader(self):
@@ -50,14 +51,16 @@ class Settings:
         if not CONFIG.exists():
             return cls()
         data = json.loads(CONFIG.read_text(encoding="utf-8"))
-        for key in ("amdl_root", "freac", "output"):
-            if key in data and not Path(data[key]).is_absolute():
+        for key in ("amdl_root", "freac", "output", "musictag"):
+            if data.get(key) and not Path(data[key]).is_absolute():
                 data[key] = str(ROOT / data[key])
         return cls(**{f.name: data[f.name] for f in dataclasses.fields(cls) if f.name in data})
 
     def save(self):
         data = dataclasses.asdict(self)
-        for key in ("amdl_root", "freac", "output"):
+        for key in ("amdl_root", "freac", "output", "musictag"):
+            if not data[key]:
+                continue
             path = Path(data[key]).resolve()
             if path.is_relative_to(ROOT):
                 data[key] = path.relative_to(ROOT).as_posix()

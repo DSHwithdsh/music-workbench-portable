@@ -8,3 +8,7 @@
 - CPython 3.14 runtime, Tcl/Tk runtime and PyInstaller bootloader are bundled to run the desktop application without a separate Python installation. Project licenses and attribution: https://docs.python.org/3/license.html , https://www.tcl-lang.org/software/tcltk/license.html , https://pyinstaller.org/en/stable/license.html .
 
 The workstation's credentials, tokens, configuration backups, music files and account caches are not included. Runtime files and login caches created later on the recipient's machine are not part of this distribution.
+
+
+## v0.2 标签组件
+Mutagen 1.48.1，GPL-2.0-or-later；许可证及元数据见 mutagen-1.48.1.dist-info。https://github.com/quodlibet/mutagen

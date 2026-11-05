@@ -16,9 +16,8 @@ class MusicApp:
     def __init__(self, root):
         self.root = root
         self.root.title("AMDL × fre:ac · 音乐工作台")
-        self.root.geometry("1080x830")
+        self.root.geometry("1080x700")
         self.root.minsize(920, 730)
-        self.root.state("zoomed")
         self.root.configure(bg="#f3f6f8")
         self.events = queue.Queue()
         self.pipeline = None
@@ -38,7 +37,7 @@ class MusicApp:
         self.source_folder = tk.StringVar(value=str(ROOT / "Music/ALAC"))
         self.file_selection = []
         self.vars = {name: tk.StringVar(value=str(getattr(self.settings, name)))
-                     for name in ("amdl_root", "freac", "output", "workers", "storefront")}
+                     for name in ("amdl_root", "freac", "output", "workers", "storefront", "musictag")}
         self.phase = tk.StringVar(value="就绪 · 粘贴链接下载，或选择已有音频转码")
         self.service = tk.StringVar(value="正在检查解密服务…")
         self._style()
@@ -181,8 +180,9 @@ class MusicApp:
             messagebox.showerror("设置检查", str(exc), parent=self.root)
 
     def browse_setting(self, key):
-        if key == "freac":
-            value = filedialog.askopenfilename(title="选择 freaccmd.exe", filetypes=[("fre:ac 命令行", "freaccmd.exe")])
+        if key in ("freac", "musictag"):
+            name = "freaccmd.exe" if key == "freac" else "MusicTag.exe"
+            value = filedialog.askopenfilename(title="选择 " + name, filetypes=[("程序", name)])
         else:
             value = filedialog.askdirectory(title="选择 AMDL 安装目录" if key == "amdl_root" else "选择音乐库目录")
         if value:
@@ -217,11 +217,11 @@ class MusicApp:
                 return
             helper = ROOT / "service-tools/ServiceManager.exe"
             if not helper.is_file():
-                raise ValueError("便携包缺少 ServiceManager.exe，请重新完整解压")
+                raise ValueError("安装包缺少 ServiceManager.exe，请重新完整解压")
             self.service_process = subprocess.Popen(
                 [str(helper), "--start"], cwd=ROOT,
                 creationflags=subprocess.CREATE_NEW_CONSOLE)
-            self.append_log("已打开便携版独立解密服务；首次会先准备环境，请在新窗口登录。下载结束后可关闭服务窗口。")
+            self.append_log("已打开安装版独立解密服务；首次会先准备环境，请在新窗口登录。下载结束后可关闭服务窗口。")
             self.root.after(3000, self.refresh_service)
         except Exception as exc:
             messagebox.showerror("启动解密服务", str(exc), parent=self.root)

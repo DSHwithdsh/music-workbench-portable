@@ -33,6 +33,10 @@ def self_test(report_path):
 
 
 def main():
+    if "--tag-self-test" in sys.argv or "--online-match-test" in sys.argv:
+        from frozen_checks import run
+        run()
+        return
     if "--self-test" in sys.argv:
         self_test(sys.argv[sys.argv.index("--self-test") + 1])
         return
@@ -58,7 +62,7 @@ if __name__ == "__main__":
         folder = ROOT / "diagnostics"
         folder.mkdir(exist_ok=True)
         (folder / "startup-error.log").write_text(error, encoding="utf-8")
-        if "--self-test" not in sys.argv and "--gui-smoke" not in sys.argv:
+        if not any(flag in sys.argv for flag in ("--self-test", "--gui-smoke", "--tag-self-test", "--online-match-test")):
             import tkinter.messagebox
             tkinter.messagebox.showerror("Music 工作台", "启动失败，详见 diagnostics/startup-error.log\n" + error[-1200:])
         sys.exit(1)

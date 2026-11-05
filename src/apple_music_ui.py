@@ -34,9 +34,8 @@ class AppleMusicApp(MusicApp):
         self.art_generation = 0
         self.art_image = None
         super().__init__(root)
-        self.root.title("Music 工作台 Portable · AMDL × fre:ac")
-        if (ROOT / "app.ico").is_file():
-            self.root.iconbitmap(str(ROOT / "app.ico"))
+        self.root.title("Music 工作台 v0.2 · 标签与歌词")
+        self.root.iconbitmap(str(ROOT / "app.ico"))
         self.root.minsize(1040, 700)
         self.root.after(500, self.load_recent)
 
@@ -73,7 +72,7 @@ class AppleMusicApp(MusicApp):
         tk.Label(brand, text="Music", font=("Segoe UI", 24, "bold"), fg=INK, bg=SIDE).pack(side="left", padx=5)
         tk.Label(sidebar, text="音乐工作台", bg=SIDE, fg=MUTED, font=("Microsoft YaHei UI", 9)).pack(anchor="w", padx=24, pady=(0, 8))
         self.nav_buttons = {}
-        for key, text in (("discover", "⌕   搜索发现"), ("queue", "↓   下载与任务"), ("library", "♫   我的音乐库"), ("convert", "⇄   本地转码"), ("settings", "⚙   设置")):
+        for key, text in (("discover", "⌕   搜索发现"), ("queue", "↓   下载与任务"), ("library", "♫   我的音乐库"), ("tags", "✎   标签与歌词"), ("convert", "⇄   本地转码"), ("settings", "⚙   设置")):
             button = tk.Button(sidebar, text=text, anchor="w", relief="flat", borderwidth=0,
                                bg=SIDE, fg=INK, activebackground="#e8e8ed", activeforeground=RED,
                                font=("Microsoft YaHei UI", 11), padx=17, pady=10,
@@ -107,6 +106,7 @@ class AppleMusicApp(MusicApp):
         tk.Frame(main, bg=BORDER, height=1).pack(fill="x")
 
         bottom = ttk.Frame(main, padding=(27, 13, 27, 12))
+        self.workflow_footer = bottom
         bottom.pack(side="bottom", fill="x")
         options = ttk.Frame(bottom)
         options.pack(fill="x")
@@ -125,9 +125,11 @@ class AppleMusicApp(MusicApp):
         self.progress.pack(side="left", fill="x", expand=True, padx=(0, 12))
         self.stop_button = ttk.Button(progress_row, text="完成当前曲目后停止", command=self.request_stop, state="disabled")
         self.stop_button.pack(side="right")
-        tk.Frame(main, bg=BORDER, height=1).pack(side="bottom", fill="x")
+        self.footer_separator = tk.Frame(main, bg=BORDER, height=1)
+        self.footer_separator.pack(side="bottom", fill="x")
 
         body = ttk.Frame(main)
+        self.body_container = body
         body.pack(fill="both", expand=True)
         self.pages = {}
         for key in self.nav_buttons:
@@ -138,6 +140,9 @@ class AppleMusicApp(MusicApp):
         self.build_convert(self.pages["convert"])
         self.build_settings(self.pages["settings"])
         self.build_library(self.pages["library"])
+        from music_tags_ui import TagPanel
+        self.tag_panel = TagPanel(self.pages["tags"], self)
+        self.tag_panel.pack(fill="both", expand=True)
         self.show_page("discover")
 
     def heading(self, parent, text, subtitle=""):
@@ -195,6 +200,8 @@ class AppleMusicApp(MusicApp):
         row.pack(fill="x", pady=(10, 12))
         self.download_button = ttk.Button(row, text="↓ 开始下载并处理", style="Accent.TButton", command=self.start_download)
         self.download_button.pack(side="left")
+        self.tag_results_button = ttk.Button(row, text="本次成品自动匹配", command=self.open_tag_results)
+        self.tag_results_button.pack(side="left", padx=9)
         ttk.Button(row, text="查看日志和报告", command=lambda: self.open_folder(ROOT / "logs")).pack(side="right")
         frame = ttk.Frame(page)
         frame.pack(fill="both", expand=True)
@@ -239,11 +246,11 @@ class AppleMusicApp(MusicApp):
         ttk.Label(page, text="保留原目录、文件名、内嵌封面与标签；LRC 随成品复制。\n原文件保留，已有成品核验后跳过，有损输入不再转码。", style="Muted.TLabel").pack(anchor="w")
 
     def build_settings(self, page):
-        self.heading(page, "设置", "AMDL、fre:ac、FFmpeg 已随便携包提供，可按需指定其他路径。")
+        self.heading(page, "设置", "AMDL、fre:ac 与标签组件已内置；外部 MusicTag 可选。")
         grid = ttk.Frame(page)
         grid.pack(fill="x")
         grid.columnconfigure(1, weight=1)
-        for index, (name, key) in enumerate((("AMDL 安装目录", "amdl_root"), ("freaccmd.exe", "freac"), ("音乐库位置", "output"))):
+        for index, (name, key) in enumerate((("AMDL 安装目录", "amdl_root"), ("freaccmd.exe", "freac"), ("MusicTag.exe", "musictag"), ("音乐库位置", "output"))):
             ttk.Label(grid, text=name).grid(row=index, column=0, sticky="w", padx=(0, 15), pady=10)
             ttk.Entry(grid, textvariable=self.vars[key]).grid(row=index, column=1, sticky="ew", pady=10)
             ttk.Button(grid, text="浏览…", command=lambda k=key: self.browse_setting(k)).grid(row=index, column=2, padx=(10, 0))
@@ -255,7 +262,7 @@ class AppleMusicApp(MusicApp):
         ttk.Entry(row, width=5, textvariable=self.vars["storefront"]).pack(side="left", padx=10)
         self.save_button = ttk.Button(row, text="保存并检查路径", command=self.save_settings, style="Accent.TButton")
         self.save_button.pack(side="right")
-        ttk.Label(page, text="搜索栏地区只影响目录检索；实际下载权限由账号决定。\n配置和日志保存在便携目录。首次解密服务使用独立 WSL 环境。", style="Muted.TLabel").pack(anchor="w", pady=15)
+        ttk.Label(page, text="搜索栏地区只影响目录检索；实际下载权限由账号决定。\n配置保存在安装目录；解密服务使用独立 WSL 环境。", style="Muted.TLabel").pack(anchor="w", pady=15)
         ttk.Label(page, text="当前音乐库", font=("Microsoft YaHei UI", 12, "bold")).pack(anchor="w", pady=(20, 8))
         ttk.Label(page, textvariable=self.vars["output"], style="Muted.TLabel").pack(anchor="w")
 
@@ -274,6 +281,12 @@ class AppleMusicApp(MusicApp):
         ttk.Button(page, text="刷新最近任务", command=self.load_recent).pack(anchor="e", pady=(12, 0))
 
     def show_page(self, key):
+        if key == "tags":
+            self.workflow_footer.pack_forget()
+            self.footer_separator.pack_forget()
+        elif not self.workflow_footer.winfo_manager():
+            self.workflow_footer.pack(side="bottom", fill="x", before=self.body_container)
+            self.footer_separator.pack(side="bottom", fill="x", before=self.body_container)
         for name, page in self.pages.items():
             page.pack_forget()
             self.nav_buttons[name].configure(bg="#fce3e8" if name == key else SIDE, fg=RED if name == key else INK)
@@ -332,7 +345,7 @@ class AppleMusicApp(MusicApp):
             self.album_title.configure(text="Apple Music 歌单")
             self.album_artist.configure(text="使用链接直接下载")
             self.album_detail.configure(text="此公开目录不提供歌单曲目；下载引擎仍可处理链接。")
-            self.album_download_button.configure(text="↓ 下载歌单", state="normal" if not self.busy else "disabled")
+            self.album_download_button.configure(text="↓ 下载歌单", state="normal" if not self.activity_busy() else "disabled")
             self.track_download_button.configure(state="disabled")
             self.catalog_note.set("已识别歌单链接。")
             return
@@ -362,8 +375,8 @@ class AppleMusicApp(MusicApp):
         year = item.get("releaseDate", "")[:4]
         detail = " · ".join(str(value) for value in (year, item.get("primaryGenreName"), f"{item['trackCount']} 首歌曲" if item.get("trackCount") else None) if value)
         self.album_detail.configure(text=detail)
-        self.album_download_button.configure(text="↓ 下载整张专辑", state="normal" if item.get("collectionId") and not self.busy else "disabled")
-        self.track_download_button.configure(state="normal" if is_track and not self.busy else "disabled")
+        self.album_download_button.configure(text="↓ 下载整张专辑", state="normal" if item.get("collectionId") and not self.activity_busy() else "disabled")
+        self.track_download_button.configure(state="normal" if is_track and not self.activity_busy() else "disabled")
         self.art_generation += 1
         generation = self.art_generation
         self.cover.configure(image="", text="♫")
@@ -383,7 +396,7 @@ class AppleMusicApp(MusicApp):
             item = self.catalog_items.get(selected[0])
             if item and self.catalog_mode == "search":
                 self.set_hero(item)
-            self.track_download_button.configure(state="normal" if any(self.catalog_items.get(row, {}).get("kind") == "song" for row in selected) and not self.busy else "disabled")
+            self.track_download_button.configure(state="normal" if any(self.catalog_items.get(row, {}).get("kind") == "song" for row in selected) and not self.activity_busy() else "disabled")
 
     def expand_album(self, _event=None):
         selected = self.catalog_tree.selection()
@@ -408,7 +421,7 @@ class AppleMusicApp(MusicApp):
             self.queue_links([item_url(item, self.catalog_country.get(), track=True) for item in items])
 
     def queue_links(self, links):
-        if self.busy:
+        if self.activity_busy():
             self.show_page("queue")
             return
         self.links.delete("1.0", "end")
@@ -423,6 +436,9 @@ class AppleMusicApp(MusicApp):
             messagebox.showerror("Apple Music", str(exc), parent=self.root)
 
     def start(self, settings, work, downloading=False):
+        if getattr(self, "tagging_busy", False):
+            self.phase.set("标签任务正在进行，请等待完成后再下载或转码")
+            return
         super().start(settings, work, downloading)
         self.show_page("queue")
 
@@ -430,6 +446,22 @@ class AppleMusicApp(MusicApp):
         super().set_controls(enabled)
         self.album_download_button.configure(state="normal" if enabled and (self.current_item or self.catalog_mode == "playlist") else "disabled")
         self.select_catalog()
+
+    def activity_busy(self):
+        return self.busy or getattr(self, "tagging_busy", False)
+
+    def open_tag_results(self):
+        self.show_page("tags")
+        self.tag_panel.load_recent()
+
+    def close(self):
+        panel = getattr(self, "tag_panel", None)
+        if panel is not None and panel.busy:
+            panel.stop.set()
+            panel.close_after = True
+            panel.status.set("正在安全停止标签任务，当前曲目完成后退出…")
+            return
+        super().close()
 
     def poll(self):
         try:
@@ -482,6 +514,7 @@ class AppleMusicApp(MusicApp):
             self.library_tree.insert("", "end", values=(report["id"][:15], title, f"成功 {successful} / 失败 {failed}"))
         if recent and not self.busy and not self.row_results:
             report = recent[0]
+            self.last_report = report
             for result in report.get("results", []):
                 row = self.tree.insert("", "end", values=(Path(result["source"]).name, result["preset"].upper(), result["status"], result["detail"]), tags=("failed" if result["status"] == "失败" else "ok",))
                 self.row_results[row] = result

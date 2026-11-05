@@ -1,22 +1,33 @@
 {
-  "name": "MusicWorkbench Portable",
+  "name": "Music 工作台",
+  "version": "0.2.0",
   "platform": "Windows x64",
-  "date": "2026-11-03",
+  "date": "2026-11-05",
   "bundled": [
     "CPython 3.14.7",
     "AMDL downloader",
     "freac 1.1.7",
     "FFmpeg",
     "MP4Box",
-    "Ubuntu Base 22.04.5 + fresh wrapper"
+    "Mutagen 1.48.1",
+    "clean Ubuntu Base 22.04.5 + wrapper"
   ],
-  "verification": {
-    "frozen_codec_test": "passed",
-    "frozen_gui_initialization": "passed",
-    "relocated_path_with_spaces_and_Chinese": "passed",
-    "PATH_without_Python_or_installed_tools": "passed",
-    "service_setup_plan": "passed; no WSL changes",
-    "original_app_files_unchanged": 5,
-    "fresh_PC_WSL_install": "not executed on deployed host"
-  }
+  "optional_external": [
+    "MusicTag.exe (not bundled)"
+  ],
+  "source_sha256": {
+    "apple_music_ui.py": "f29838916a40f707446bedeb4388478f06c3656a777d4addb22f75f3bd8acf87",
+    "frozen_checks.py": "054a347760bcd02e8483322752fb8cf4f246e5f79e9bbe148fe9856cf126b66a",
+    "music_app.py": "141014b70f966f4d93d8c59a3d36074fb467cafe5061ebc9e5513174ac67cf5d",
+    "music_catalog.py": "4007fe08ef4f51205d53804b304c48819e337e5a644b7dcbc93e78e051f99a0e",
+    "music_core.py": "03239933b36e5a789f7a67289f8200e78ba87d8daf60adb947bb02c49a094475",
+    "music_matching.py": "ed47f7195dc79e9bedf4327cb184238690630479ff03f452a44d0b14b14da848",
+    "music_tags.py": "97011f944d856974ffd9a2eb0f21c0066570e77b4ef5a4c78fb483fcc9a5eb1d",
+    "music_tags_ui.py": "e203d77e031f164a0f3f20bbf426aeca9440a99ed4c3051e35f0f82ce6c40af3",
+    "portable_entry.py": "e3659187013a96d9c3f65bcc50a5834951e2ec4e8f5a9d45d5244883949b4f15",
+    "service_manager.py": "f8506434bdd64e3d9d9b6bb3aa4eb1a79cacd3c871c830c40a9a7f2b34e9ccb6",
+    "test_music_tags.py": "c4197c4e9bfd28954397fcad7cb7fc5ae77527fc1df48ad6d07d9163cb9fc991",
+    "test_pipeline.py": "691a00157f7fdf40298b33892211640f2da1bc1854e5663958344a195b3f9f5e"
+  },
+  "validation": "See separate validation.json alongside installer; new-PC WSL setup not executed on deployed host"
 }

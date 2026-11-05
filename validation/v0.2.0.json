@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "date": "2026-11-05",
+  "installation_mode": "actual setup EXE /PORTABLE=1 (no registry or shortcuts)",
+  "standard_install_registration": "not verified: execution host denied HKCU uninstall key and Start Menu writes; initial setup rolled back",
+  "installed_manifest_files": 684,
+  "frozen_tests": 18,
+  "flac_and_aac": "passed",
+  "gui_tags_page": "passed",
+  "online_match": {
+    "frozen": true,
+    "metadata": {
+      "title": "Nuedori",
+      "artist": "Suara",
+      "score": 1.0,
+      "ready": true
+    },
+    "lyrics": {
+      "kind": "同步 LRC",
+      "lines": 28,
+      "ready": true
+    },
+    "errors": [],
+    "success": true
+  },
+  "PATH_without_Python_or_installed_tools": "passed",
+  "Chinese_and_space_path": "passed",
+  "reinstall_preserved_user_data": {
+    "tools/amdl/GUI-downloader/_internal/src/core/config.yaml": "48ee918bd737f8d56db4589d2e6e21c7e7f4ad268e1bcb6c125bbb8eea0042a5",
+    "settings.json": "fb0258aa37e5857a1e0bc2860bd0dbfe5b2dcc3ba23b988d19ca6c098342458a",
+    "Music/keep-user-data.txt": "25e76492a9b78e38bb0befcdd528a583e819af292c302573de26638b5d61626d",
+    "tag-backups/keep-backup.txt": "25e76492a9b78e38bb0befcdd528a583e819af292c302573de26638b5d61626d",
+    "service-runtime/keep-state.txt": "25e76492a9b78e38bb0befcdd528a583e819af292c302573de26638b5d61626d"
+  },
+  "service_plan": "passed; no WSL changes",
+  "original_files_unchanged": 11,
+  "elapsed_seconds": 23,
+  "fresh_PC_WSL_setup": "not executed on deployed host",
+  "signature": "unsigned",
+  "uninstall_preserved_user_data": "passed",
+  "installer_sha256": "8e0e537ab5b853bf1a63ca676b10c2a4b188c5c08be3108a60952d7b4de4035d",
+  "installer_bytes": 202652333,
+  "portable_zip": {
+    "filename": "MusicWorkbench-0.2.0-Portable-Windows-x64.zip",
+    "bytes": 244789671,
+    "sha256": "1956c71c8435de7345d1041cb8a8cfda66adf8279787cb5a2df6dd084aba75f5",
+    "archive_integrity": "passed; all manifest entries verified"
+  },
+  "privacy": "Public summary; local absolute test paths removed. No audio, lyrics text, credentials or logs included."
+}
